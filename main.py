@@ -1,6 +1,9 @@
 import osmdata as osm
+import os
 
 if __name__ == "__main__":
+    # GETTING TRACE DATA
+    """
     # bounding region that is requested
     left = -71.0546
     bottom = 42.3326
@@ -14,3 +17,8 @@ if __name__ == "__main__":
     FILENAME = "all_gps_traces_from_seaport.gpx"
     with open(FILENAME, 'w') as f:
         f.write(data)
+    """
+    # PARSING & PLOTTING THE DATA
+    print(os.listdir())
+    osm.parse_gps_traces('./all_gps_traces_from_seaport.gpx', True)
+
