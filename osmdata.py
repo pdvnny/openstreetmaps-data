@@ -79,19 +79,21 @@ def parse_gps_traces(traces, file: bool = False) -> list:
 
     traces = []
     for trace in root.findall('gpxns:trk', namespace):
-        trace_name = trace.find('gpxns:name')
-        trace_url = trace.find('gpxns:url')
-        trkseg_num = 0
-        for trkseg in trace.findall('gpxns:trkseg'):
-            trace_dict = dict()
+        trace_name = trace.find('gpxns:name', namespace)
+        name = trace_name.text if trace_name is not None else "Untitled"
+        trace_url = trace.find('gpxns:url', namespace)
+        url = trace_url.text if trace_url is not None else "No URL provided"
 
-            trace_dict["name"] = trace_name.text
-            trace_dict["url"] = trace_url.text
+        trkseg_num = 0
+        for trkseg in trace.findall('gpxns:trkseg', namespace):
+            trace_dict = dict()
+            trace_dict["name"] = name
+            trace_dict["url"] = url
             trace_dict['seg_num'] = trkseg_num
 
             lats = []
             longs = []
-            for trkpt in trkseg.findall('gpxns:trkpt'):
+            for trkpt in trkseg.findall('gpxns:trkpt', namespace):
                 lats.append(trkpt.attrib['lat'])
                 longs.append(trkpt.attrib['lon'])
 
@@ -100,7 +102,18 @@ def parse_gps_traces(traces, file: bool = False) -> list:
             traces.append(trace_dict)
 
             trkseg_num += 1
-        print(traces[0])
-        break
     return traces
 
+
+"""
+@:author pdvnny (pgd)
+@:version 1
+
+@:param "trace_dicts" - dictionaries containing information
+about every GPS trace from a region
+@:param "region" - a list of the boundary for the region being plotted
+
+This method plots all GPS traces from a region on a single plot
+"""
+def plot_traces(trace_dicts: list, region: list) -> None:
+    print("`plot_traces` has not been completed yet.")
