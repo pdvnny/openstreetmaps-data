@@ -1,28 +1,21 @@
 import osmdata as osm
-import os
-
-# TODO Pull new updates from dev branch to main branch
+import json
 
 if __name__ == "__main__":
     # GETTING TRACE DATA
     # bounding region that is requested
-    left = -71.0546
-    bottom = 42.3326
-    right = -71.0238
-    top = 42.3608
-    region = [left, bottom, right, top]
-    """
-    data = osm.get_gps_traces(region)
-    print(data[:100])
 
-    # Write returned data to a file
-    FILENAME = "all_gps_traces_from_seaport.gpx"
-    with open(FILENAME, 'w') as f:
-        f.write(data)
-    """
-    # PARSING & PLOTTING THE DATA
-    # print(os.listdir())
-    traces = osm.parse_gps_traces('all_gps_traces_from_seaport.gpx', True)
-    print(f"Found {len(traces)} GPS traces")
-    osm.plot_traces(traces, region)
+    # Provide location by assigning a JSON file to this variable
+    file = "location_json_files/" + "singapore.json"
 
+    # Loading parameters for the location
+    with open(file, 'r') as f:
+        info = json.load(f)
+
+    location = info['location']
+    print(f"--- Pulling data from {location} ---")
+    region = info['region']
+
+    raw_data = osm.get_and_save_gps_traces(region, location)
+    traces = osm.parse_gps_traces(raw_data)
+    osm.save_gps_traces("gps_data_by_city", location, traces)

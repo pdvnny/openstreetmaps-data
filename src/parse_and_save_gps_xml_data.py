@@ -7,7 +7,6 @@ and (3) save trace data as .npy files
 
 """
 
-import os
 import xml.etree.ElementTree as ET
 import numpy as np
 import glob
@@ -15,7 +14,7 @@ import glob
 """
 You will need:
 (1) a "source_gpx_files" folder that contains a folder within it with ".gpx" files.
-(2) 
+(2) a "gps_data_by_city" folder where the output ".npy" file can be saved
 
 """
 
