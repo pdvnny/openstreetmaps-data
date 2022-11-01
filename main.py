@@ -1,16 +1,21 @@
 import osmdata as osm
+import json
 
 if __name__ == "__main__":
+    # GETTING TRACE DATA
     # bounding region that is requested
-    left = -71.0546
-    bottom = 42.3326
-    right = -71.0238
-    top = 42.3608
-    region = [left, bottom, right, top]
-    data = osm.get_gps_traces(region)
-    print(data[:100])
 
-    # Write returned data to a file
-    FILENAME = "all_gps_traces_from_seaport.gpx"
-    with open(FILENAME, 'w') as f:
-        f.write(data)
+    # Provide location by assigning a JSON file to this variable
+    file = "location_json_files/" + "singapore.json"
+
+    # Loading parameters for the location
+    with open(file, 'r') as f:
+        info = json.load(f)
+
+    location = info['location']
+    print(f"--- Pulling data from {location} ---")
+    region = info['region']
+
+    raw_data = osm.get_and_save_gps_traces(region, location)
+    traces = osm.parse_gps_traces(raw_data)
+    osm.save_gps_traces("gps_data_by_city", location, traces)
