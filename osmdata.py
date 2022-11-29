@@ -128,8 +128,6 @@ def get_and_save_gps_traces(bounds_lst: list, location: str, start: int = 0):
 @:return a list of dictionaries, where each dictionary contains information
 about one trace in the source data
 """
-
-
 def parse_gps_traces(traces, file: bool = False) -> list:
     # print("Part 2: Parsing information from GPS traces")
     if file:
@@ -224,7 +222,5 @@ about every GPS trace from a region
 
 This method plots all GPS traces from a region on a single plot
 """
-
-
 def plot_traces(trace_dicts: list, region: list) -> None:
     print("`plot_traces` has not been completed yet.")

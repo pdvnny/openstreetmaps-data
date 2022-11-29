@@ -26,4 +26,4 @@ if __name__ == "__main__":
             info = json.load(f)
         location = info['location']
         region = info['region']
-        osm.pull_gps_traces("gps_data_by_city", location, region)
+        osm.pull_gps_traces("../gps_data_by_city", location, region)
