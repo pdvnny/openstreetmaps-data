@@ -1,5 +1,5 @@
 # data files
-source_gpx_files/*/*.npy
+source_gpx_files/*/*
 sample_data/
 *.gpx
 

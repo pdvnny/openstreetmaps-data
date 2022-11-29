@@ -71,8 +71,9 @@ def get_gps_traces(bounds_lst: list, location: str):
 
 
 def get_and_save_gps_traces(bounds_lst: list, location: str, start: int = 0):
-    print("Part 1: Getting GPS traces ---")
-    os.mkdir("source_gpx_files/"+location)
+    # print("Part 1: Getting GPS traces ---")
+    if (not os.path.exists("source_gpx_files/"+location)):
+        os.mkdir("source_gpx_files/"+location)
 
     bounds_lst_str = [str(b) for b in bounds_lst]
     data = ""
@@ -84,14 +85,14 @@ def get_and_save_gps_traces(bounds_lst: list, location: str, start: int = 0):
     url = "https://api.openstreetmap.org/"
     endpoint = f"{url}api/0.6/trackpoints?bbox={bounds}"
 
-    print("Starting while loop")
+    # print("Starting while loop")
     page = start
     while True:
         try:
             request_page = f"&page={page}"
             response = requests.get(endpoint + request_page)
             new_data = response.text
-            with open(f"source_gpx_files/{location}/page{page}", 'w') as f:
+            with open(f"source_gpx_files/{location}/page{page}.gpx", 'w') as f:
                 f.write(new_data)
         except:
             print("Lost connection")
@@ -99,7 +100,7 @@ def get_and_save_gps_traces(bounds_lst: list, location: str, start: int = 0):
             break
 
         # Kill fetching data conditions
-        if len(new_data.split('\n')) > 4 and page < (start + 150):
+        if len(new_data.split('\n')) > 4:  # and page < (start + 150):
             print(f"Found page {page}")
             # Accumulating the data
             if page == 0:
@@ -130,7 +131,7 @@ about one trace in the source data
 
 
 def parse_gps_traces(traces, file: bool = False) -> list:
-    print("Part 2: Parsing information from GPS traces")
+    # print("Part 2: Parsing information from GPS traces")
     if file:
         tree = ET.parse(traces)
         root = tree.getroot()
@@ -176,7 +177,7 @@ def save_gps_traces(file_root: str, region: str, traces: list) -> None:
     :param traces: This is a list of dictionaries containing information about GPS traces
     :return:
     """
-    print("Part 3: Saving data as numpy files")
+    # print("Part 3: Saving data as numpy files")
     save_array = np.empty(len(traces), object)
     region_data = []
     for i in range(len(traces)):

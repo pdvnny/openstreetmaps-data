@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 # with the OSM API
 
 if __name__ == "__main__":
-    location = "san_francisco"  # this should be the name of a folder with ".gpx" files
+    location = "washington_dc"  # this should be the name of a folder with ".gpx" files
     source_files = glob.glob(f"source_gpx_files/{location}/*")
     all_traces = []
     for tr in source_files:
