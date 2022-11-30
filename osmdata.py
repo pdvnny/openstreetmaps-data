@@ -15,22 +15,49 @@ import numpy as np
 from matplotlib import pyplot as plt
 import os
 
+import typing
+import json
+
 # installing new packages in PyCharm
 # # https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-upgrading-packages.html
 
 
-"""
-@author pdvnny (pgd)
-@version 1
+# ---------------------- FILTERING AND PROCESSING `.OSM` DATA -------------------------
 
-@param bounds_lst: a list containing float/int values that
-define the region where we want to extract GPS traces.
+def region_filter(loc_file: str, data_file: str) -> None:
+    """
+    @author pdvnny (pgdunn@bu.edu)
 
-@return Either None or string of gps trace data
-"""
+    :param loc_file: The name of the `json` file with bounds that define the region. The path of this loc_file
+                     is assumed to be "location_json_files/*loc_file*"
+    :param data_file: The name of the data file that is being filtered.
+    :return: A list containing the OSM data in specified region
+    """
+    file = "location_json_files/"+loc_file
+    with open(file, 'r') as f:
+        info = json.load(f)
+
+    location = info['location']
+    bounds = info['region']
+    print(bounds)
+
+
+
+    return None
+
+# -------------------------- WORKING WITH GPS TRACES --------------------------------
 
 
 def get_gps_traces(bounds_lst: list, location: str):
+    """
+    @author pdvnny (pgd)
+    @version 1
+
+    @param bounds_lst: a list containing float/int values that
+    define the region where we want to extract GPS traces.
+
+    @return Either None or string of gps trace data
+    """
     print("--- Part 1: Getting GPS traces ---")
     bounds_lst_str = [str(b) for b in bounds_lst]
     data = ""
