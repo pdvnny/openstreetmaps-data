@@ -1,4 +1,6 @@
-# Information about Extracting OSM data from Planet OSM File
+# Extracting/Transforming raw OSM data for Navigation
+
+**GOAL**: Use the OSM data to create BEV masks that identify where objects (e.g., roads, walkways, buildings, etc.) exist on a map.
 
 Parker Dunn (pgdunn@bu.edu)  
 Nov 29, 2022
@@ -7,7 +9,9 @@ Nov 29, 2022
 
 * All OSM data for planet updated and made available weekly [here](https://planet.openstreetmap.org)
   * Endpoint for the `planet-latest.osm.pbf` file is `https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf`
-
+* `osmcovert` tool for converting `.pub` files (common format online) into `.osm` files (format you can work with)
+  * [OSM wiki page](https://wiki.openstreetmap.org/wiki/Osmconvert)
+  * OH! You can filter by geographic location. [wiki page - 3.2. Applying geographical boarders](https://wiki.openstreetmap.org/wiki/Osmconvert#Applying_Geographical_Borders)
 * `osmfilter` tool for filtering ".osm" data
   * [Wiki page](https://wiki.openstreetmap.org/wiki/Osmfilter)
 
@@ -16,7 +20,11 @@ Nov 29, 2022
 
 ## Purpose
 
-Rather than querying the OSM API, and potentially waiting a long time for data, it looks like there are tools 
-avialable to filter the planet OSM data.
+* Determine an optimal approach to retrieve and process data OSM data (XML-style files with extension `.osm` that 
+  contain nodes, ways, relations, etc).
+
+## Progress
+
+
 
 

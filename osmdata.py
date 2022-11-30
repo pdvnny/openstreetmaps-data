@@ -41,9 +41,8 @@ def region_filter(loc_file: str, data_file: str) -> None:
     bounds = info['region']
     print(bounds)
 
-
-
     return None
+
 
 # -------------------------- WORKING WITH GPS TRACES --------------------------------
 
