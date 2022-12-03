@@ -1,6 +1,5 @@
-import osmdata as osm
+from src import gps_traces as osm
 import glob
-import xml.etree.ElementTree as ET
 
 # This script is used to process gpx files whenever I have a problem
 # with the OSM API

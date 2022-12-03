@@ -1,5 +1,4 @@
-import osmdata as osm
-import os
+from src import gps_traces as osm
 import json
 import glob
 

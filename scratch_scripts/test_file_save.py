@@ -1,4 +1,4 @@
-import osmdata as osm
+from src import gps_traces as osm
 
 if __name__ == "__main__":
     traces = osm.parse_gps_traces("gps_data_by_city/temp.gpx", True)
