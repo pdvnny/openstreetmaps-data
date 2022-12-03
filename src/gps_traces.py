@@ -21,9 +21,8 @@ import json
 # installing new packages in PyCharm
 # # https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-upgrading-packages.html
 
-
-<<<<<<< Updated upstream:osmdata.py
 # ---------------------- FILTERING AND PROCESSING `.OSM` DATA -------------------------
+
 
 def region_filter(loc_file: str, data_file: str) -> None:
     """
@@ -44,9 +43,9 @@ def region_filter(loc_file: str, data_file: str) -> None:
 
     return None
 
-
 # -------------------------- WORKING WITH GPS TRACES --------------------------------
-=======
+
+
 def get_gps_traces(bounds_lst: list, location: str):
     """
     @author pdvnny (pgd)
@@ -54,22 +53,10 @@ def get_gps_traces(bounds_lst: list, location: str):
 
     @param bounds_lst: a list containing float/int values that
     define the region where we want to extract GPS traces.
->>>>>>> Stashed changes:src/gps_traces.py
 
     @param location: a name for the file that is created by this
     method
 
-<<<<<<< Updated upstream:osmdata.py
-def get_gps_traces(bounds_lst: list, location: str):
-    """
-    @author pdvnny (pgd)
-    @version 1
-
-    @param bounds_lst: a list containing float/int values that
-    define the region where we want to extract GPS traces.
-
-=======
->>>>>>> Stashed changes:src/gps_traces.py
     @return Either None or string of gps trace data
     """
     print("--- Part 1: Getting GPS traces ---")
@@ -113,7 +100,7 @@ def get_gps_traces(bounds_lst: list, location: str):
 
 def get_and_save_gps_traces(bounds_lst: list, location: str, start: int = 0):
     # print("Part 1: Getting GPS traces ---")
-    if (not os.path.exists("source_gpx_files/"+location)):
+    if not os.path.exists("source_gpx_files/" + location):
         os.mkdir("source_gpx_files/"+location)
 
     bounds_lst_str = [str(b) for b in bounds_lst]
