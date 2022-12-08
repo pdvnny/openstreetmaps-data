@@ -9,3 +9,11 @@
 * Namespaces in XML documents
   * [StackOverflow article - Parsing XML with namespace](https://stackoverflow.com/questions/14853243/parsing-xml-with-namespace-in-python-via-elementtree)
 
+
+## osmconvert & osmfilter
+* [osmconvert](https://wiki.openstreetmap.org/wiki/Osmconvert)
+* [osmfilter](https://wiki.openstreetmap.org/wiki/Osmfilter)
+
+## Working on the SCC
+* [Submitting a Batch Job](https://www.bu.edu/tech/support/research/system-usage/running-jobs/submitting-jobs/)
+* [Managing and Tracking your Batch Job](https://www.bu.edu/tech/support/research/system-usage/running-jobs/tracking-jobs/)
