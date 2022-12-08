@@ -69,3 +69,17 @@ and it was only a couple minutes, so it felt like a good intermediate step to ta
 
 To get the data for Boston: `osmconvert planet-latest.o5m -b=-71.1128,42.3394,-71.0400,42.3707 -o=boston.osm`
 
+## Using `osmfilter` to Extract Specific OSM Features
+
+I plan to use this tool as needed - it has many options and I'm not sure what the best approach to grab the data 
+that I need.
+
+*Just going to track how I create the tool (i.e., download and compile) for now*
+
+### Download and compile the `osmfilter` executable
+
+Similar to `osmconvert`, the tool is provided a C program [here](http://m.m.i24.cc/osmfilter.c).
+
+1. I downloaded the C program from the link above using --> `wget -O osmfilter.c http://m.m.i24.cc/osmfilter.c`
+2. I compiled the code using `gcc` --> `gcc -x c osmfilter.c -O3 -o osmfilter`
+

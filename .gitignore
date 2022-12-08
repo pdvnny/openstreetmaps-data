@@ -3,9 +3,11 @@ source_gpx_files/*/*
 sample_data/
 *.gpx
 
+# IDE files
+.idea/*
+
 # executables
 *.exe
-
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
