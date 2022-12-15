@@ -61,7 +61,7 @@ long.*
 This step is not absolutely necessary. I'm pretty sure you can convert directly from `.pbf` to `.osm` and filter for 
 a specific location at the same time. The process was pretty slow though. I'm not sure how long it would have taken 
 to finish. I believe the creator listed on the Wiki page how long the conversion from `.pbf` to `.o5m` would take, 
-and it was only a couple minutes, so it felt like a good intermediate step to take.  
+and it was only a couple of minutes, so it felt like a good intermediate step to take.  
 
 3. Convert the `o5m` file to `osm` and filter for a specific location. The location you want is provided as a 
    lon/lat bounding box. The values below (listed after the `-b` are specific to the region that you want to 
@@ -71,7 +71,7 @@ To get the data for Boston: `osmconvert planet-latest.o5m -b=-71.1128,42.3394,-7
 
 ## Using `osmfilter` to Extract Specific OSM Features
 
-I plan to use this tool as needed - it has many options and I'm not sure what the best approach to grab the data 
+I plan to use this tool as needed - it has many options, and I'm not sure what the best approach to grab the data 
 that I need.
 
 *Just going to track how I create the tool (i.e., download and compile) for now*
@@ -82,4 +82,7 @@ Similar to `osmconvert`, the tool is provided a C program [here](http://m.m.i24.
 
 1. I downloaded the C program from the link above using --> `wget -O osmfilter.c http://m.m.i24.cc/osmfilter.c`
 2. I compiled the code using `gcc` --> `gcc -x c osmfilter.c -O3 -o osmfilter`
-
+3. I used the OSM Wiki page for this program ([`osmfilter` wiki](https://wiki.openstreetmap.org/wiki/Osmconvert) - 
+   also linked above) to figure out how to extract the data that I needed.
+    Example: `./osmfilter boston/boston.osm --keep-nodes= > boston/boston_nodes.osm` -- extracts the `<node>` XML 
+   elements from the data.
