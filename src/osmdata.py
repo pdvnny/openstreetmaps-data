@@ -48,9 +48,38 @@ def get_bounds(data: np.ndarray) -> Sequence[list]:
     return x_bounds, y_bounds
 
 
+def get_color_options() -> Sequence[str]:
+    color_options = ["#BE33FF",  # (1) violet
+                    "#F60614",  # (2) red
+                    "#108516",  # (3) forest green
+                    "#FFA500",  # (4) orange
+                    "#721A1A",  # (5) maroon
+                    "#FF00FF",  # (6) magenta
+                    "#76D77A",  # (7) pastel/light green
+                    "#96C3E6",  # (8) pastel dark blue
+                    "#CFD33C",  # (9) golden rod
+                    "#CCCCFF",  # (10) pastel/light purple
+                    "#99A3A4",  # (11) grey
+                    "#F7DC6F",  # (12) light yellow
+                    "#008080",  # (13) teal
+                    "#BF5700",  # (14) burnt orange
+                    "#96E6E6",  # (15) pastel/light SKY blue
+                    "#000000",  # (16) black
+                    "#808000",  # (17) olive
+                    "#2300ff",  # (18) blue
+                    "#00FF00",  # (19) lime
+                    "#000080",  # (20) navy blue
+                    "#FA8072",  # (21) salmon
+                    "#40E0D0",  # (22) light green/blue
+                    "#F5A2D0",  # (23) light pink
+                    "#F5CFA2",  # (24) light orange
+                    "#27AE60",  # (25) normal green - name that I made up
+                    "#1D7A74"   # (26) dark teal
+                    ]
+    return color_options
+
+# ------------- FUNCTIONS FOR WORKING WITH OSM DATA -------------
 "GOAL 1: Extract features and plot the locations using matplotlib"
-
-
 def extract_nodes(filename: str) -> pd.DataFrame:
     """
     This method converts the node data in an OSM file (XML-style format)
@@ -108,7 +137,20 @@ def plot_nodes(df: pd.DataFrame, loc: str) -> None:
     plt.savefig(f"sample_data/nodes_in_{loc}.png")
 
 
-def extract_ways(file: str) -> pd.DataFrame:
+def extract_ways(loc_dir: str, file: str) -> pd.DataFrame:
+    """
+    This method loads a ".osm" file provided as an input and extracts information
+    about the way objects in the file. The contributing nodes are returned as a
+    DataFrame so that they can be merged with the node location data. The **way tags**
+    are also extracted and saved in a JSON file.
+
+    :param loc_dir: The city name tha identifies the subdirectory where this data comes from
+    :param file: The path to a file containing OSM way objects (XML-style)
+    :return: a DataFrame with three columns (for now): "way_id" and "id".
+            "way_id" is an identifier for the particular way
+            "id" is an identifier of a node that is a member of the way since
+            a way is a higher order object composed of nodes.
+    """
     tree = ET.parse(file)
     root = tree.getroot()
 
@@ -138,11 +180,63 @@ def extract_ways(file: str) -> pd.DataFrame:
             # print(node.attrib)  # output is a series of dictionaries like {'ref': '60656559'}
             # node_ids.append(int(node.attrib['ref']))
             nodes_with_way_id.append({'way_id': way_id, 'id': int(node.attrib['ref'])})
-        # tags = []
-        # for tag in way.findall('tag'):
-        #     print(tag.attrib)
+        tags = dict()
+        for tag in way.findall('tag'):
+            key = tag.attrib['k']
+            value = tag.attrib['v']
+            tags[key] = value
+
+        if len(tags) != 0 and not os.path.isdir(f"sample_data/{loc_dir}_ways"):
+            os.mkdir(f"sample_data/{loc_dir}_ways")
+
+        way_attributes_file = f"sample_data/{loc_dir}_ways/way_{way_id}.json"
+        with open(way_attributes_file, 'w') as wf:
+            json.dump(tags, wf)
 
     # print("Potential children of ways: ", way_tags)  # OUTPUT: ["nd", "tag']
 
     return pd.DataFrame.from_records(nodes_with_way_id)
+
+
+def plot_ways(df: pd.DataFrame, loc: str) -> str:
+    """
+    This method plots the way data from an OSM data file with multiple colors. Although,
+    there is repetition of the colors in the plot.
+    :param df: (CONFIGURATION OF INPUT DATA MAY CHANGE) This is a DataFrame
+                containing "node" and "way" data created by performing
+                a left join on (1) a DataFrame with "way" data and (2) a DataFrame
+                with "node" data.
+    :param loc: A location used to identify the plot. It will show up in the
+    plot name and file name (when the plot is saved)
+    :return: A string containing plot file name
+    """
+    colors = get_color_options()
+    (x_range, y_range) = get_bounds(df.loc[:, ["lon", "lat"]].to_numpy(dtype=np.float32))
+
+    fig, ax = plt.subplots(1, 1, figsize=(12, 10))
+    ax.set_title(f"Ways in {loc} (from {loc}.osm)")
+    ax.set_xlabel("Longitude")
+    ax.set_ylabel("Latitude")
+    ax.set_xlim(x_range)
+    ax.set_ylim(y_range)
+
+    color_counter = 0
+    plotted_counter = 0
+    for way in df.way_id.unique():  # iterate through all the way ids
+        way_filter = (df.way_id == way)
+        x = df.loc[way_filter, "lon"].tolist()
+        y = df.loc[way_filter, "lat"].tolist()
+        # print(type(x), x)
+        # print(type(y), y)
+        ax.plot(x, y, color=colors[color_counter])
+        color_counter += 1
+        plotted_counter += 1
+        if color_counter >= len(colors):
+            color_counter = 0
+        if plotted_counter > 10000:
+            break
+    # plt.show()
+    fname = f"sample_data/{loc}_ways_10000.png"
+    plt.savefig(fname)
+    return fname
 
