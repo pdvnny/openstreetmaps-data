@@ -10,6 +10,13 @@ Dec 14, 2022
 
 ## References
 
+**Information about the OSM Data**  
+1. [OSM Map Features](https://wiki.openstreetmap.org/wiki/Map_Features) - A list of the features that might be 
+  identified as tags.
+  * "OpenStreetMap represents physical features on the ground (e.g., roads or buildings) using tags attached to its 
+    basic data structures (its nodes, ways, and relations). Each tag describes a geographic attribte of the feature 
+    being show by that specific node, way, or relation."
+
 
 ## To Do
 
@@ -18,7 +25,9 @@ Dec 14, 2022
 
 - [X] I am skipping extracting `tag`s from the `<way>` objects as well. There are many data points to extract. I'll 
   try to sort out what I need later.
-  - `osmdata.extractways()` takes care of this task
+  - `osmdata.extract_ways()` takes care of this task
+- [X] Extract ways with a specific tag and plot them
+- [ ] Add labels to plots with ways extracted for a specific tag -> updates to `plot_ways_with_tag()`
 
 ## Progress
 
@@ -66,3 +75,42 @@ alone. However, the plots with fewer ways (e.g., 1000 ways) demonstrate the amou
 each extract way.
 
 <img src="../images/boston_ways_comparison.png" alt="Information gained from extracting ways" style="width:500px; height:400px">
+
+### Extracting ways with certain attributes
+
+#### Attributes of interest (from ref 1)
+
+* Buildings
+  * "building:part" - e.g., `{ "building:part" : "yes" }`
+* Roads
+  * "highway" - e.g., `"highway": "residential"`
+  * "lanes" - e.g., `"lanes" : "1"`
+  * "name" - e.g., `"name" : "Bent Street"`
+  * "oneway" - e.g., `"oneway": "yes"`
+  * "maxspeed" - e.g., `"maxspeed" : "25 mph"`
+* Walkways
+
+#### Extract and plot all roads
+
+* Step 1: Modify `extract_ways` to create a new variation of the method that assesses if a way has a certain "map 
+  feature"/tag and only returns the way if it contains the tag
+* Step 2: Use the new method from step 1 to extract all possible roads!
+  * I will start by trying to extract only ways with the "highway" tag.
+  * Any way containing this tag and any of the following values will be extracted...
+  * motorway
+  * trunk
+  * primary
+  * secondary
+  * tertiary
+  * residential
+  * motorway_link
+  * trunk_link
+  * primary_link
+  * secondary_link
+  * tertiary_link
+  * living_street
+* Step 3: Plot the roads using a similar plotting method to the original
+  * Modified the color scheme to be specific to the values above
+
+<img src="../images/boston_ways_with_tag_highway.png" alt="The highways in Boston" style="width:500px; height:400px">
+

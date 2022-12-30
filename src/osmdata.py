@@ -206,10 +206,57 @@ def extract_ways(loc_dir: str, file: str) -> pd.DataFrame:
     return pd.DataFrame.from_records(nodes_with_way_id)
 
 
+def extract_ways_with_tag(file: str, target_tag: str, values: Sequence[str]) -> pd.DataFrame:
+    """
+    To be continued...
+
+    :param file: The path to a file containing OSM "way" objects (XML-style)
+    :param tag:
+    :param values:
+    :return: a DataFrame with three columns: "way_id", "id" (i.e., node_id), and
+            the tag provided.
+            "way_id" is an identifier for the particular way
+            "id" is an identifier of a node that is a member of the way since
+            a way is a higher order object composed of nodes.
+            The final column will list the value associated with the tag provided.
+            e.g., If we are looking for ways with the tag "highway", the column
+            would be "highway" and the values for each row will be one of the options
+            in "values"
+    """
+    tree = ET.parse(file)
+    root = tree.getroot()
+
+    nodes_with_way_id = []
+
+    for way in root.findall("way"):
+        # RETRIEVE THE WAY ID
+        attribs = way.attrib
+        way_id = int(attribs['id'])
+
+        # RETRIEVE THE ATTRIBUTES OF THIS WAY
+        tags = dict()
+        for tag in way.findall('tag'):
+            key = tag.attrib['k']
+            value = tag.attrib['v']
+            tags[key] = value
+
+        # RETRIEVE ALL NODE IDS THAT ARE PART OF THE WAY
+        # IF IT CONTAINS THE REQUESTED TAG
+        value = tags.get(target_tag)    # "tags.get(tag)" -> the tag value if it exists or None if the tag does not exist
+        if value is not None and value in values:
+            for node in way.findall("nd"):
+                new_entry = {'way_id': way_id, 'id': int(node.attrib['ref']), target_tag: value}
+                nodes_with_way_id.append(new_entry)
+
+        # end of for loop
+    return pd.DataFrame.from_records(nodes_with_way_id)
+
+
 def plot_ways(df: pd.DataFrame, loc: str) -> str:
     """
     This method plots the way data from an OSM data file with multiple colors. Although,
     there is repetition of the colors in the plot.
+
     :param df: (CONFIGURATION OF INPUT DATA MAY CHANGE) This is a DataFrame
                 containing "node" and "way" data created by performing
                 a left join on (1) a DataFrame with "way" data and (2) a DataFrame
@@ -244,7 +291,67 @@ def plot_ways(df: pd.DataFrame, loc: str) -> str:
         if plotted_counter > 10000:
             break
     # plt.show()
-    fname = f"sample_data/{loc}_ways_10000.png"
+    fname = f"sample_data/{loc}_ways_1000.png"
     plt.savefig(fname)
     return fname
+
+
+def plot_ways_with_tag(df: pd.DataFrame, loc: str) -> str:
+    """
+    This method plots the way data FOR A SPECIFIC TAG (e.g, the way tagged
+    with "highway") from an OSM data file
+
+    :param df: (CONFIGURATION OF INPUT DATA MAY CHANGE) This is a DataFrame
+                containing "node" and "way" data created by performing
+                a left join on (1) a DataFrame with "way" data and (2) a DataFrame
+                with "node" data.
+    :param loc: A location used to identify the plot. It will show up in the
+    plot name and file name (when the plot is saved)
+    :return: A string containing plot file name
+    """
+    colors = get_color_options()
+    (x_range, y_range) = get_bounds(df.loc[:, ["lon", "lat"]].to_numpy(dtype=np.float32))
+
+    color_opts = {
+        "motorway": colors[0],
+        "trunk": colors[1],
+        "primary": colors[2],
+        "secondary": colors[3],
+        "tertiary": colors[4],
+        "residential": colors[5],
+        "motorway_link": colors[6],
+        "trunk_link": colors[6],
+        "primary_link": colors[6],
+        "secondary_link": colors[6],
+        "tertiary_link": colors[6],
+        "living_street": colors[7]
+    }
+
+    # Finds the name of the attribute being plotted
+    cols = df.columns  # This probably isn't reliable
+    tag = None
+    for col in cols:
+        if col not in ["way_id", "id", "lat", "lon"]:
+            tag = col
+    # print(tag)
+
+    fig, ax = plt.subplots(1, 1, figsize=(12, 10))
+    ax.set_title(f"Ways with '{tag}' tag in {loc} (from {loc}.osm)")
+    ax.set_xlabel("Longitude")
+    ax.set_ylabel("Latitude")
+    ax.set_xlim(x_range)
+    ax.set_ylim(y_range)
+
+    for way in df.way_id.unique():  # iterate through all the way ids
+        way_filter = (df.way_id == way)
+        tag_value = df.loc[way_filter, tag].unique()[-1]
+        print(tag_value)
+        x = df.loc[way_filter, "lon"].tolist()
+        y = df.loc[way_filter, "lat"].tolist()
+        ax.plot(x, y, color=color_opts[tag_value])
+
+    fname = f"sample_data/{loc}_ways_with_tag_{tag}.png"
+    plt.savefig(fname)
+    return fname
+
 
