@@ -78,17 +78,25 @@ def get_color_options() -> Sequence[str]:
                     ]
     return color_options
 
+
 # ------------- FUNCTIONS FOR WORKING WITH OSM DATA -------------
+
+
 "GOAL 1: Extract features and plot the locations using matplotlib"
+
+
 def extract_nodes(filename: str) -> pd.DataFrame:
     """
     This method converts the node data in an OSM file (XML-style format)
-    into a numpy array.
+    into a Pandas DataFrame containing "id", "lat", and "lon" of the node.
+
     This method is designed for `.osm` files that have been processed to
     extract the node objects.
+
     :param filename: A filename/path for a `.osm` file with node objects
                      (e.g., boston_nodes.osm)
-    :return:
+    :return: If the file exists, a pandas DataFrame with rows for each Node in the provided file.
+             If the file DOES NOT exist, then None.
     """
     tree = ET.parse(filename)
     root = tree.getroot()
@@ -145,7 +153,7 @@ def extract_ways(loc_dir: str, file: str) -> pd.DataFrame:
     are also extracted and saved in a JSON file.
 
     :param loc_dir: The city name tha identifies the subdirectory where this data comes from
-    :param file: The path to a file containing OSM way objects (XML-style)
+    :param file: The path to a file containing OSM "way" objects (XML-style)
     :return: a DataFrame with three columns (for now): "way_id" and "id".
             "way_id" is an identifier for the particular way
             "id" is an identifier of a node that is a member of the way since
