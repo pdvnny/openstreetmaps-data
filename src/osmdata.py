@@ -16,7 +16,6 @@ a bounded region
 
 import xml.etree.ElementTree as ET
 from collections.abc import Sequence
-
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -353,5 +352,137 @@ def plot_ways_with_tag(df: pd.DataFrame, loc: str) -> str:
     fname = f"sample_data/{loc}_ways_with_tag_{tag}.png"
     plt.savefig(fname)
     return fname
+
+
+def extract_relations(loc_dir: str, file: str) -> pd.DataFrame:
+    """
+    This method loads a ".osm" file provided as an input and extracts information
+    about the relations in the file. The contributing nodes are returned as a
+    DataFrame so that they can be merged with the node location data.
+
+    :param loc_dir: The city name that identifies the subdirectory where this data comes from
+    :param file: The path to a file containing OSM "relations" (XML-style)
+    :return: a DataFrame with two columns (for now): "rel_id" and "id".
+            "rel_id" is an identifier for the particular relation
+            "id" is an identifier of a node that is a member of the way since
+            a way is a higher order object composed of nodes.
+    """
+    tree = ET.parse(file)
+    root = tree.getroot()
+
+    # count = 0
+    # for rel in root.findall("relation"):
+    #     count += 1
+    # print(f"Number of relations: {count}")   # OUTPUT: 1867
+
+    members_and_rel_id = []
+
+    # Debugging
+    counter = 0
+    # all_tags = set()
+
+    for rel in root.findall("relation"):
+        # print(rel.attrib)
+        # e.g.
+        # {'id': '38047', 'version': '11', 'timestamp': '2021-08-21T03:36:20Z',
+        # 'changeset': '110011439', 'uid': '7470367', 'user': 'JesseFTW'}
+        attribs = rel.attrib
+        rel_id = int(attribs['id'])
+
+        # rel_tags = set()
+
+        # This loop style could work.
+        # `child.tag` can be used to identify nodes vs. tags
+        # A condition would be needed to check which one I am dealing with
+        # but it would only require one iteration through the data instead of two
+        # for child in rel:
+        #     print(child)
+        #     # e.g., <Element 'member' at 0x0000013A5885710>
+        #     # e.g., <Element 'tag' at 0x000001B16E5F63E0>
+        #     print(child.attrib)
+        #     # e.g., Member: {'type': 'node', 'ref': '61317423', 'role': 'via'}
+        #     # e.g., Member: {'type': 'way', 'ref': 115591269', 'role': 'from'}
+        #     # e.g., Member: {'type': 'way', 'ref': '426580269', 'role': 'to'}
+        #     # e.g., Tag: {'k': 'addr:housenumber', 'v': '4'}
+        #    # NOTE: `child.tag` returns 'tag' and 'nd'
+
+        # for tag in rel.findall('tag'):
+        #     tag_dict = tag.attrib
+        #     rel_tags.add(tag_dict['k'])
+        #     all_tags.add(tag_dict['k'])
+
+        # counter += 1
+        # if counter > 10:
+        #     break
+
+        for member in rel.findall("member"):
+            member_dict = member.attrib
+            if member_dict['type'] == 'way':
+                members_and_rel_id.append({'rel_id': rel_id,
+                                           'way_id': int(member_dict['ref']),
+                                           'node_id': 0
+                                           })
+            else:
+                members_and_rel_id.append({'rel_id': rel_id,
+                                           'way_id': 0,
+                                           'node_id': int(member_dict['ref'])
+                                           })
+
+    # print("The tags in all relations from this file: ")
+    # with open("sample_data/boston_relation_tags.txt", 'a') as f:
+    #     for tag in all_tags:
+    #         print(tag)
+    #         f.write(tag)
+    #         f.write("\n")
+    # print("length of records:", len(members_and_rel_id))
+    return pd.DataFrame.from_records(members_and_rel_id)
+
+
+def extract_relations_with_tag(file: str, target_tag: str) -> pd.DataFrame:
+    """
+    This method extracts the nodes and ways (by ID) associated with relations
+    containing the "target_tag" (e.g., a relation may contain a tag element with
+    the key "building").
+    This function finds all matching relations and returns a DataFrame
+    containing information about the relations.
+
+    :param file: The path to the file containing OSM data (XML-format)
+    :param target_tag: A tag that all extracted relations should have.
+    :return: A DataFrame
+    IF there are relations with the "target_tag", then there will be a row for each
+    member of the relation. Rows for nodes have a valid node ID and a way ID of 0.
+    Rows for ways have a valid way ID and a node ID of 0.
+
+    IF there are NO relations with the "target_tag", then the returned dataframe
+    is empty.
+    """
+    tree = ET.parse(file)
+    root = tree.getroot()
+
+    members_and_rel_id = []
+    for rel in root.findall("relation"):
+        attribs = rel.attrib
+        rel_id = int(attribs['id'])
+
+        rel_tags = set()
+        for tag in rel.findall("tag"):
+            tag_dict = tag.attrib
+            rel_tags.add(tag_dict['k'])
+
+        if target_tag in rel_tags:
+            for member in rel.findall("member"):
+                member_dict = member.attrib
+                if member_dict['type'] == 'way':
+                    members_and_rel_id.append({'rel_id': rel_id,
+                                               'way_id': int(member_dict['ref']),
+                                               'node_id': 0
+                                               })
+                else:
+                    members_and_rel_id.append({'rel_id': rel_id,
+                                               'way_id': 0,
+                                               'node_id': int(member_dict['ref'])
+                                               })
+    return pd.DataFrame.from_records(members_and_rel_id)
+
 
 

@@ -21,23 +21,22 @@ if __name__ == "__main__":
     # print(nodes_df.iloc[:5, :])
 
     # ----------------------------- Extracting higher order OSM features ------------------------------
-    # EXTRACTING ALL RELATIONS
-    # relations_df = osmdata.extract_relations("boston", "sample_data/boston.osm")
+    # EXTRACTING ALL WAYS
+    # ways_df = osmdata.extract_ways("boston", "sample_data/boston.osm")
 
-    # EXTRACTING RELATIONS WITH A SPECIFIC FEATURE
-    relations_df = osmdata.extract_relations_with_tag("sample_data/boston.osm", "building")
+    # EXTRACTING WAYS WIHT A SPECIFIC FEATURE
+    accepted_values = ["motorway", "trunk", "primary", "secondary", "tertiary", "residential", "motorway_link",
+                       "trunk_link", "primary_link", "secondary_link", "tertiary_link", "living_street"]
+    ways_df = osmdata.extract_ways_with_tag("sample_data/boston.osm", "highway", accepted_values)
 
-    # print(relations_df.iloc[:10, :])
-    # print("Length of DataFrame:", len(relations_df))
-    # print("Nodes associated with any building relations: ")
-    # print(relations_df.node_id.unique())
+    # print(ways_df.iloc[:5, :])
 
     # ------------- SAMPLE OF A NEXT STEP: Completing the "way" data by merging with nodes_df -----------
     # print("Number of nodes: ", len(nodes_df))  # 184,675
     # print("Number of nodes in ways: ", len(ways_df))  # 294,715
     # Number of nodes is smaller so some nodes exist in multiple ways
 
-    # ways_data = ways_df.merge(nodes_df, on='id', how='left', suffixes=('_l', '_r'))
+    ways_data = ways_df.merge(nodes_df, on='id', how='left', suffixes=('_l', '_r'))
 
     # print(ways_data.iloc[:5, :])
     # print("Number of entries in merged data:", len(ways_data))
@@ -48,4 +47,4 @@ if __name__ == "__main__":
     # print(my_way.iloc[:10, :])
 
     # ------------------------------- Plotting the way data -------------------------------------------
-    # filename = osmdata.plot_ways_with_tag(ways_data, "boston")
+    filename = osmdata.plot_ways_with_tag(ways_data, "boston")

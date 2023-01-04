@@ -22,12 +22,20 @@ Dec 14, 2022
 
 - [ ] I extracted the nodes, but need to backtrack and make updates
     - [ ] Extract and store `tag` information (I did not extract any 'metadata' type information yet)
-
+- [ ] Add labels to plots with ways extracted for a specific tag -> updates to `plot_ways_with_tag()`
+- [ ] Create plot demonstrating how "ways" (and "nodes" ... not sure what useful objects contain ways and nodes) are 
+  used to compose "relations"
+- [ ] Create a method that aggregates the nodes and ways that make up relations into a DataFrame containing only 
+  `node_id` (which may be extracted from a way) and `relation_id`
+___
 - [X] I am skipping extracting `tag`s from the `<way>` objects as well. There are many data points to extract. I'll 
   try to sort out what I need later.
   - `osmdata.extract_ways()` takes care of this task
 - [X] Extract ways with a specific tag and plot them
-- [ ] Add labels to plots with ways extracted for a specific tag -> updates to `plot_ways_with_tag()`
+
+- [X] Extract relation data
+- [X] Extract relations with specific tags - e.g., the "building" tag
+
 
 ## Progress
 
@@ -114,3 +122,48 @@ each extract way.
 
 <img src="../images/boston_ways_with_tag_highway.png" alt="The highways in Boston" style="width:500px; height:400px">
 
+### Extracting 'relations' from OSM data
+
+The structure of the OSM data with regard to ways and relations seems to be quite similar. Each has a collection of 
+tag and node children associated with them. I'm not sure if the nodes in the relation data are different from the 
+ways. The tags associated with the relations seem to be quite similar to the ways.
+
+The first thing I did was list out the tags associated all relations in the `boston.osm` data. The tags (not their 
+values) are saved in the `boston_relation_tags.txt` file. There is a sample of tags that seemed particularly 
+important below.
+
+* Highways/roads
+  * restriction
+* Pathways
+  * railway
+* Buildings
+  * building:levels
+  * building:flats
+  * building:use
+  * building:part
+* Tags that I'm curious about...
+  * access
+  * place
+
+In large part, the tags describe names or features of buildings/places. The attributes seem much less vital to 
+gathering useful information about the road compared to the nodes and ways.
+
+Relations can contain nodes and/or ways. I have written `extract_relations()` to pull all relations out of an OSM 
+data file. This function extracts all relations from a file and returns a DataFrame with a row for each way or node 
+in the relation. Each row has a real ID value for the data object it represents - i.e., there is a real node ID if 
+the row represents a node within the relation and a real way ID if the row represents a way within the relation, and 
+a "0" for the object that is not represented by the row. **While it might be helpful in some cases to extract all 
+objects corresponding with a relation, it does not seem that this extraction format is particularly effective.**
+
+I think it will be far more useful to use relations to identify collections of ways that go together.
+
+
+### Plotting the relations that contain buildings
+
+* I wrote a method that finds all relations with a specified attribute: `extract_relations_with_tag()`
+  * Generally, this method operates the same way as `extract_relations()`
+  * I noticed when I look for relations containing the tag "building" that the extracted relations contain only ways,
+    which is kind of what I expected/hoped. *It suggests to me that the primary purpose of relations is the creation 
+    of higher-order structures from ways.*
+
+*To be continued...*
