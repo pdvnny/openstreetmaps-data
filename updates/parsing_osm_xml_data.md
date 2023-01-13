@@ -8,6 +8,18 @@ attributes apply to each node.
 Parker Dunn (pgdunn@bu.edu)  
 Dec 14, 2022
 
+# Table of Contents
+
+1. [References](#references)
+2. [To Do](#to-do)
+3. [Progress](#progress)
+   * [Extracting the `nodes` from `.osm` files](#extracting-the-nodes-from-osm-files)
+   * [Extracting the `way` objects from `.osm` files](#extracting-the-way-objects-from-osm-files)
+   * [Extracting ways with certain attributes](#extracting-ways-with-certain-attributes)
+   * [Extracting 'relations' from OSM data](#extracting--relations-from-osm-data)
+   * [Plotting the relations that contain buildings](#plotting-the-relations-that-contain-buildings)
+4. [Conclusion](#conclusion)
+
 ## References
 
 **Information about the OSM Data**  
@@ -23,7 +35,7 @@ Dec 14, 2022
 - [ ] I extracted the nodes, but need to backtrack and make updates
     - [ ] Extract and store `tag` information (I did not extract any 'metadata' type information yet)
 - [ ] Add labels to plots with ways extracted for a specific tag -> updates to `plot_ways_with_tag()`
-- [ ] Create plot demonstrating how "ways" (and "nodes" ... not sure what useful objects contain ways and nodes) are 
+- [X] Create plot demonstrating how "ways" (and "nodes" ... not sure what useful objects contain ways and nodes) are 
   used to compose "relations"
 - [ ] Create a method that aggregates the nodes and ways that make up relations into a DataFrame containing only 
   `node_id` (which may be extracted from a way) and `relation_id`
@@ -166,4 +178,33 @@ I think it will be far more useful to use relations to identify collections of w
     which is kind of what I expected/hoped. *It suggests to me that the primary purpose of relations is the creation 
     of higher-order structures from ways.*
 
-*To be continued...*
+* I want to visualize the information available from a collection of ways compared to the higher-order relation.
+  * I expect that a relation will be composed of "ways" that work together to form larger areas, like complete 
+    highways or areas with buildings.
+  * I have made a visual comparison of the ways and the relations they represent in `ways_vs_relations_viz.py`
+
+<img src="../images/relation_components_visualization.png" alt="Comparison of raw node data and higher-order way data" style="width:500px; height:800px">
+
+Takeaways:
+* There is some unexpected redundancy in the relation data.
+* I did a general filter that looked for any "building" - i.e., did not consider or account for the variations of 
+  building.
+* This approach may not be completely efficient, but that doesn't impact the end result. As long as I have the 
+  "outer" object (in the form of a "way"),I will be able to identify every point in a map where an object (e.g., a 
+  building) exists according to the OSM data.
+
+## Conclusion
+
+I have done more than enough exploring of the OSM data for now, whether or now I have finished all tasks that 
+I created for myself. I think I can comfortably filter and plot the OSM data now.
+
+However, I still have to **generate a streamlined process to go from GPS coordinates to BEV image/mask** of any 
+specific region. I am planning to tackle this task in two parts. FIRST, research my options for converting GPS data 
+(continuous) to an image/mask, then choose and implement one of the options. SECOND, start my work with the OSM 
+planet data from the beginning with the goal of creating a single process to accomplish the task.
+
+For the second task (*creating a streamlined process*), it will be best complete the task in Python so that it can 
+be a method called whenever it is needed. I can use Python's features to send simple requests to `osmfilter` and 
+`osmconvert` (mentioned in my previous efforts - see [extract_osm_data_by_city.md](./extract_osm_data_by_city.md)). 
+For example, [this page](https://janakiev.com/blog/python-shell-commands/) describes a couple approaches to run 
+bash/shell commands and scripts from Python.

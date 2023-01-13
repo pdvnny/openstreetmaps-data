@@ -37,13 +37,13 @@ def get_bounds(data: np.ndarray) -> Sequence[list]:
     """
     x_bounds = [min(data[:, 0]), max(data[:, 0])]
     x_range = x_bounds[1] - x_bounds[0]
-    x_bounds = [x_bounds[0] - (0.005 * x_range),
-                x_bounds[1] + (0.005 * x_range)]
+    x_bounds = [x_bounds[0] - (0.01 * x_range),
+                x_bounds[1] + (0.01 * x_range)]
 
     y_bounds = [min(data[:, 1]), max(data[:, 1])]
     y_range = y_bounds[1] - y_bounds[0]
-    y_bounds = [y_bounds[0] - (0.005 * y_range),
-                y_bounds[1] + (0.005 * y_range)]
+    y_bounds = [y_bounds[0] - (0.01 * y_range),
+                y_bounds[1] + (0.01 * y_range)]
     return x_bounds, y_bounds
 
 
@@ -196,9 +196,9 @@ def extract_ways(loc_dir: str, file: str) -> pd.DataFrame:
         if len(tags) != 0 and not os.path.isdir(f"sample_data/{loc_dir}_ways"):
             os.mkdir(f"sample_data/{loc_dir}_ways")
 
-        way_attributes_file = f"sample_data/{loc_dir}_ways/way_{way_id}.json"
-        with open(way_attributes_file, 'w') as wf:
-            json.dump(tags, wf)
+        # way_attributes_file = f"sample_data/{loc_dir}_ways/way_{way_id}.json"
+        # with open(way_attributes_file, 'w') as wf:
+        #     json.dump(tags, wf)
 
     # print("Potential children of ways: ", way_tags)  # OUTPUT: ["nd", "tag']
 
